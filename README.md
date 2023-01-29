@@ -1,0 +1,1 @@
+# gitlab-wxwork-webhook-adapter
