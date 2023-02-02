@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.HashMap;
+
 /**
  * @author tianqingshuai
  */
@@ -27,16 +29,30 @@ public class DefaultWxworkRequestService implements RequestService {
     @Override
     public boolean sendTextMsg(String content, String mentionedList, String mentionedMobileList) {
         String url = WXWORK_API_URL_PREFIX + botKey.getKey();
-        String body = "{\"msgtype\": \"text\", \"text\": {\"content\": \"" + content + "\"}, \"mentioned_list\": [\"" + mentionedList + "\"], \"mentioned_mobile_list\": [\"" + mentionedMobileList + "\"]}";
-        String result = restTemplate.postForObject(url, body, String.class);
+        HashMap<String, Object> stringObjectHashMap = new HashMap<>(16);
+        stringObjectHashMap.put("msgtype", "text");
+        HashMap<String, String> text = new HashMap<>(16);
+        text.put("content", content);
+        stringObjectHashMap.put("text", text);
+        stringObjectHashMap.put("mentioned_list", mentionedList);
+        stringObjectHashMap.put("mentioned_mobile_list", mentionedMobileList);
+        log.info("wechat request:{}", stringObjectHashMap);
+        String result = restTemplate.postForObject(url, stringObjectHashMap, String.class);
+        log.info("wechat reponse:{}", result);
         return result != null;
     }
 
     @Override
     public boolean sendMarkdownMsg(String markdown) {
         String url = WXWORK_API_URL_PREFIX + botKey.getKey();
-        String body = "{\"msgtype\": \"markdown\", \"markdown\": {\"content\": \"" + markdown + "\"}}";
-        String result = restTemplate.postForObject(url, body, String.class);
+        HashMap<String, Object> stringObjectHashMap = new HashMap<>(16);
+        stringObjectHashMap.put("msgtype", "markdown");
+        HashMap<String, String> text = new HashMap<>(16);
+        text.put("content", markdown);
+        stringObjectHashMap.put("markdown", text);
+        log.info("wechat request:{}", stringObjectHashMap);
+        String result = restTemplate.postForObject(url, stringObjectHashMap, String.class);
+        log.info("wechat reponse:{}", result);
         return result != null;
     }
 }
